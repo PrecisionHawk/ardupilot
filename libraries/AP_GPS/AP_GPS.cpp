@@ -20,6 +20,7 @@
 #include <AP_Math/AP_Math.h>
 #include <AP_Notify/AP_Notify.h>
 #include <GCS_MAVLink/GCS.h>
+#include <stdio.h>      // for sprintf
 
 extern const AP_HAL::HAL &hal;
 
@@ -245,6 +246,9 @@ AP_GPS::detect_instance(uint8_t instance)
 			dstate->last_baud = 0;
 		}
 		uint32_t baudrate = _baudrates[dstate->last_baud];
+		char msgBuffer[40];
+		sprintf(msgBuffer, "GPS baud: trying %d", baudrate);
+		GCS_MAVLINK::send_statustext_all(MAV_SEVERITY_DEBUG, msgBuffer);
 		_port[instance]->begin(baudrate);
 		_port[instance]->set_flow_control(AP_HAL::UARTDriver::FLOW_CONTROL_DISABLE);
 		dstate->last_baud_change_ms = now;
